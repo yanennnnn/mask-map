@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>口罩地圖</title>
+</head>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<link rel="stylesheet" type="text/css" href="css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:100,300,500,600,700,800,900&amp;display=swap">
+
+<body>
+    <input type="checkbox" name="" id="side_nav_switch">
+    <aside class="side_nav">
+        <label for="side_nav_switch">
+            <img src="imgs/bg_drag.svg">
+        </label>
+        <div class="side_nav_header">
+            <h2>口罩即時地圖</h2>
+            <div class="mark">
+                <p>資料來源:衛服部</p>
+                <p id="date"></p>
+            </div>
+        </div>
+        <div class="side_nav_banner">
+            <p class="day"></p>
+            <p class="number"></p>
+            <a href="#"><img src="imgs/banner_link_to official web.svg" alt="口罩實名制注意事項" title="口罩實名制注意事項"></a>
+        </div>
+        <div class="side_nav_search">
+            <p>現在位置</p>
+            <div class="search">
+                <input type="text" name="" id="searchInput">
+                <div class="search_icon"><img src="imgs/icon_search.svg" id="searchBtn"></div>
+            </div>
+            <div class="search_mask">
+                <ul class="search_mask_group">
+                    <li><a href="#" class="search_mask_item" data-mask="all">所有口罩</a></li>
+                    <li><a href="#" class="search_mask_item" data-mask="adult">成人口罩</a></li>
+                    <li><a href="#" class="search_mask_item" data-mask="child">兒童口罩</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="side_nav_select">
+            <p>尚有庫存店家</p>
+            <ul>
+                <li><a href="#">距離最近</a></li>
+                <li><a href="#">存量最多</a></li>
+                <li><a href="#" id="stared-btn">已標星號</a></li>
+            </ul>
+        </div>
+        <div class="side_nav_item">
+        </div>
+    </aside>
+    <div id="map"></div>
+    <script src="all.js"></script>
+</body>
+
+</html>
