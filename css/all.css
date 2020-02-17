@@ -422,6 +422,10 @@ body {
           border: 1px solid #EF8A00; }
       .side_nav_select > ul li + li {
         margin-left: 5px; }
+      .side_nav_select > ul #stared-btn.active {
+        background-color: #EF8A00;
+        color: #FFFFFF;
+        border: 1px solid #EF8A00; }
   .side_nav_item {
     padding: 25px 29px;
     overflow-y: auto;

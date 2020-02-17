@@ -1,4 +1,5 @@
-const lovedData = JSON.parse(localStorage.getItem('lovedLocal')) || [];
+const starData = JSON.parse(localStorage.getItem('starLocal')) || [];
+
 
 var map = L.map('map', {
     center: [25.0478142, 121.5147601],
@@ -50,13 +51,14 @@ xhr.send();
 //設定icon顏色 //當資料回傳時，下面語法就會自動觸發
 xhr.onload = function() {
     var data = JSON.parse(xhr.responseText).features;
-    let searchbtn = document.querySelector('#searchBtn')
-    let searchInput = document.querySelector('#searchInput')
+    let searchbtn = document.querySelector('#searchBtn');
+    let searchInput = document.querySelector('#searchInput');
+    let staredBtn = document.querySelector('#stared-btn');
+    staredBtn.addEventListener('click', function() {
+        getStarlocal(starData);
+        // staredBtn.classList.add('active');
+    }, false);
 
-
-
-
-    // console.log(maskBtn[0].dataset.item);
     for (let i = 0; data.length > i; i++) {
         //map
         var mask;
@@ -99,7 +101,7 @@ xhr.onload = function() {
     }
 
 
-    function searchAddress(e, stared = false) {
+    function searchAddress(e) {
         //累積的搜尋資料
         let searchList = [];
         //搜尋的資料
@@ -129,8 +131,8 @@ xhr.onload = function() {
                               </ul>
                           </div>
                           <div class="card-button">
-                                <a class="icon-star ${stared ? 'hide' : ''}"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
-                                <a class="icon-stared ${stared ? 'show' : ''}"> <img src="imgs/icon_star_selected.svg" alt="" /></a>
+                                <a class="icon-star"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
+                                <a class="icon-stared "> <img src="imgs/icon_star_selected.svg" alt="" /></a>
                                 <a class="icon-load" href="#"> <img src="imgs/icon_nav.svg" alt="" /></a>
                           </div>
                       </div>
@@ -211,23 +213,62 @@ xhr.onload = function() {
             })
         }
 
+        starBtnActive()
 
+    }
 
+    function getStarlocal(item) {
+        let str = '';
+        let starlocal = [];
+        // let starLen = item.length;
+        // console.log(item[2]);
+        for (let i = 0; data.length > i; i++) {
+            for (let j = 0; j < item.length; j++) {
+                if (data[i].properties.phone == item[j]) {
+                    str = `
+                    <div class="card maskInfo" data-lat="${data[i].geometry.coordinates[1]}" data-lng="${data[i].geometry.coordinates[0]}">
+                      <div class=" card-body">
+                          <div class=" card-item">
+                              <h3 class=" card-p" > ${data[i].properties.name}</h3> <span class="card-distance">10km</span>
+                              <ul>
+                                  <li>${data[i].properties.address}</li>
+                                  <li>${data[i].properties.phone}</li>
+                                  <li>今日營業時間：</li>
+                              </ul>
+                          </div>
+                          <div class="card-button">
+                                <a class="icon-star hide"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
+                                <a class="icon-stared show"> <img src="imgs/icon_star_selected.svg" alt="" /></a>
+                                <a class="icon-load" href="#"> <img src="imgs/icon_nav.svg" alt="" /></a>
+                          </div>
+                      </div>
+                      <div class=" card-maskcount">
+                          <p class="adult"><span>成人</span> ${data[i].properties.mask_adult} </p>
+                          <p class="child"><span>兒童</span> ${data[i].properties.mask_child} </p>
+                      </div>
+                      <p>${data[i].properties.updated} 更新</p>
+                    </div>`
+                    starlocal += str;
+
+                }
+            }
+            sectionView.innerHTML = starlocal;
+        }
         starBtnActive()
     }
-    document.getElementById('stared-btn').addEventListener('click', function(e) {
 
-    })
     map.addLayer(markers);
     searchbtn.addEventListener('click', searchAddress, false);
     searchInput.addEventListener('keydown', searchAddress, false);
-
+    // staredBtn.addEventListener('click', getStarlocal, false);
+    getStarlocal(starData);
 }
 
 L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
+//星號按鈕 加入收藏
 function starBtnActive() {
     const star = document.querySelectorAll('.maskInfo .icon-star');
     const stared = document.querySelectorAll('.maskInfo .icon-stared');
@@ -237,11 +278,13 @@ function starBtnActive() {
         console.log(starTel);
         e.addEventListener('click', function() {
 
-            lovedData.push(starTel);
-            // console.log(e);
-            e.classList.toggle('hide');
-            e.parentNode.children[1].classList.toggle('show');
-            localStorage.setItem('lovedLocal', JSON.stringify(lovedData));
+            starData.push(starTel);
+            console.log(e);
+            // e.classList.toggle('hide');
+            // e.parentNode.children[1].classList.toggle('show');
+            e.classList.add('hide');
+            e.parentNode.children[1].classList.add('show');
+            localStorage.setItem('starLocal', JSON.stringify(starData));
 
         })
     })
@@ -250,14 +293,15 @@ function starBtnActive() {
         const starTel = e.parentNode.parentNode.children[0].children[2].children[1].textContent;
         // const lovedStoreTel = e.parentNode.parentNode.children[2].textContent;
         e.addEventListener('click', function() {
-            removeByValue(lovedData, starTel);
-            e.classList.toggle('show');
-            e.parentNode.children[0].classList.toggle('hide');
-            localStorage.setItem('lovedLocal', JSON.stringify(lovedData));
+            removeByValue(starData, starTel);
+            // e.classList.toggle('show');
+            // e.parentNode.children[0].classList.toggle('hide');
+            e.classList.remove('show');
+            e.parentNode.children[0].classList.remove('hide');
+            localStorage.setItem('starLocal', JSON.stringify(starData));
         })
     })
 }
-
 
 
 // 時間
@@ -296,9 +340,9 @@ function getDate() {
     }
 }
 
-
 getDate();
 
+// 刪除陣列中的特定數值或字串。
 function removeByValue(array, value) {
     return array.forEach((item, index) => {
         if (item === value) {
