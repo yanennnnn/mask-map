@@ -51,45 +51,59 @@ xhr.send();
 //設定icon顏色 //當資料回傳時，下面語法就會自動觸發
 xhr.onload = function() {
     var data = JSON.parse(xhr.responseText).features;
+    getmap(data);
     let searchbtn = document.querySelector('#searchBtn');
     let searchInput = document.querySelector('#searchInput');
+    const otherBtn = document.querySelectorAll('.other-btn');
     let staredBtn = document.querySelector('#stared-btn');
+    const maskScroll = document.querySelector('.side_nav_item')
+    // 口罩按鈕
+    let maskBtn = document.querySelectorAll('.search_mask_item');
     staredBtn.addEventListener('click', function() {
+        let c = 0;
+        while (c < otherBtn.length) {
+            // console.log(otherBtn[c].children);
+            otherBtn[c++].classList.remove('active');
+        }
+        maskBtn[0].classList.add('active');
+        maskBtn[1].classList.remove('active');
+        maskBtn[2].classList.remove('active');
         getStarlocal(starData);
-        // staredBtn.classList.add('active');
+        staredBtn.classList.add('active');
+        searchInput.value = "";
     }, false);
 
-    for (let i = 0; data.length > i; i++) {
-        //map
-        var mask;
-        if (data[i].properties.mask_adult == 0 && data[i].properties.mask_child == 0) {
-            mask = redIcon;
-        } else {
-            // mask = greenIcon;
-            mask = L.divIcon({
+    function getmap(data) {
+        for (let i = 0; data.length > i; i++) {
+            //map
+            var mask;
+            if (data[i].properties.mask_adult == 0 && data[i].properties.mask_child == 0) {
+                mask = redIcon;
+            } else {
+                // mask = greenIcon;
+                mask = L.divIcon({
 
-                iconSize: [47, 40],
-                iconAnchor: [20, 41], //經緯度位置
-                popupAnchor: [1, -34],
-                html: `
+                    iconSize: [47, 40],
+                    iconAnchor: [20, 41], //經緯度位置
+                    popupAnchor: [1, -34],
+                    html: `
                 <span > ${data[i].properties.mask_adult + data[i].properties.mask_child}</span>`,
-                className: 'custom-div-icon',
-            })
-        }
-        // mask = L.divIcon({
-        //     html: `<p> ${data[i].properties.mask_adult}</p>`
-        // })
-        //依序把maker到入圖層，跑陣列資料
-        markers.addLayer(L.marker([data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]], { icon: mask }).bindPopup(
-            `<div class="map card">
+                    className: 'custom-div-icon',
+                })
+            }
+            // mask = L.divIcon({
+            //     html: `<p> ${data[i].properties.mask_adult}</p>`
+            // })
+            //依序把maker到入圖層，跑陣列資料
+            markers.addLayer(L.marker([data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]], { icon: mask }).bindPopup(
+                `<div class="map card">
               <div class=" card-body">
                 <div class=" card-item">
                     <h1 class=" card-h1">  ${data[i].properties.name}  </h1>  <span class="card-distance">10km</span>
                     <p> ${data[i].properties.updated} </p>
                 </div>
-                <div class=" card-button">
-                    <a class="icon-star"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
-                    <a class="icon-load" href="#"> <img src="imgs/icon_nav.svg" alt="" /></a>
+                <div class="card-button">
+                    <a class="icon-load" href="https://www.google.com.tw/maps/place/${data[i].properties.address}" target="_blank"> <img src="imgs/icon_nav.svg" alt="" /></a>
                 </div>
               </div>
               <div class=" card-maskcount">
@@ -97,16 +111,19 @@ xhr.onload = function() {
                     <p class="child"><span>兒童</span>  ${data[i].properties.mask_child}  </p>
               </div>
              </div>`
-        ));
+            ));
+        }
+
+        map.addLayer(markers);
+        starBtnActive()
     }
 
 
+
+
     function searchAddress(e) {
-        //累積的搜尋資料
-        let searchList = [];
         //搜尋的資料
         let pharmacyStore = [];
-
         if (e.keyCode == 13 || e.type == 'click') {
             //搜尋字
             let searchValue = searchInput.value.trim();
@@ -119,39 +136,25 @@ xhr.onload = function() {
                 if (data[i].properties.address.indexOf(searchValue) != -1 || data[i].properties.name.indexOf(searchValue) != -1) {
                     //儲存data
                     pharmacyStore.push(data[i]);
-                    let str = `
-                    <div class="card maskInfo" data-lat="${data[i].geometry.coordinates[1]}" data-lng="${data[i].geometry.coordinates[0]}">
-                      <div class=" card-body">
-                          <div class=" card-item">
-                              <h3 class=" card-p" > ${data[i].properties.name}</h3> <span class="card-distance">10km</span>
-                              <ul>
-                                  <li>${data[i].properties.address}</li>
-                                  <li>${data[i].properties.phone}</li>
-                                  <li>今日營業時間：</li>
-                              </ul>
-                          </div>
-                          <div class="card-button">
-                                <a class="icon-star"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
-                                <a class="icon-stared "> <img src="imgs/icon_star_selected.svg" alt="" /></a>
-                                <a class="icon-load" href="#"> <img src="imgs/icon_nav.svg" alt="" /></a>
-                          </div>
-                      </div>
-                      <div class=" card-maskcount">
-                          <p class="adult"><span>成人</span> ${data[i].properties.mask_adult} </p>
-                          <p class="child"><span>兒童</span> ${data[i].properties.mask_child} </p>
-                      </div>
-                      <p>${data[i].properties.updated} 更新</p>
-                    </div>`
-                    searchList += str;
                 }
-
             }
-
-            sectionView.innerHTML = searchList;
-            //口罩按鈕
-
+            let c = 0;
+            while (c < otherBtn.length) {
+                // console.log(otherBtn[c].children);
+                otherBtn[c++].classList.remove('active');
+            }
+            // staredBtn.classList.remove('active');
         }
-        let maskBtn = document.querySelectorAll('.search_mask_item');
+        // stared
+        // starData.forEach(function(e) {
+        //     for (let i = 0; pharmacyStore.length > i; i++) {
+        //         if (pharmacyStore[i].properties.phone === e) {
+        //              stared = true;
+        //         }
+        //     }
+        // })
+        StoreInfo(pharmacyStore);
+        getCountMuch(pharmacyStore);
 
         //移動到搜尋的第一個地方
         if (pharmacyStore[0] != null) {
@@ -167,20 +170,67 @@ xhr.onload = function() {
             return
         }
 
-        //點選藥局改變地圖位置 
-        let infoPointer = document.querySelectorAll(".maskInfo");
-        for (let i = 0; i < pharmacyStore.length; i++) {
-            infoPointer[i].addEventListener('click', function(e) {
-                Lat = e.currentTarget.dataset.lat;
-                Lng = e.currentTarget.dataset.lng;
-                map.setView([Lat, Lng], 20)
 
-            });
+    }
+
+    function StoreInfo(pharmacyStore, stared = false) {
+        // console.log(pharmacyStore);
+        let getStarted = [];
+        let searchList = [];
+        for (let i = 0; pharmacyStore.length > i; i++) {
+            let str = `
+                    <div class="card maskInfo" data-lat="${pharmacyStore[i].geometry.coordinates[1]}" data-lng="${pharmacyStore[i].geometry.coordinates[0]}">
+                      <div class=" card-body">
+                          <div class=" card-item">
+                              <h3 class=" card-p" > ${pharmacyStore[i].properties.name}</h3> <span class="card-distance">10km</span>
+                              <ul>
+                                  <li>${pharmacyStore[i].properties.address}</li>
+                                  <li>${pharmacyStore[i].properties.phone}</li>
+                                  <li>營業時間：${pharmacyStore[i].properties.note ? pharmacyStore[i].properties.note : '暫無資料'}</li>
+                              </ul>
+                          </div>
+                          <div class="card-button">
+                                <a class="icon-star href="#" ${stared ? 'hide' : ''}"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
+                                <a class="icon-stared  href="#" ${stared ? 'show' : ''}"> <img src="imgs/icon_star_selected.svg" alt="" /></a>
+                                <a class="icon-load" href="https://www.google.com.tw/maps/place/${pharmacyStore[i].properties.address}" target="_blank"> <img src="imgs/icon_nav.svg" alt="" /></a>
+                          </div>
+                      </div>
+                      <div class=" card-maskcount">
+                          <p class="adult"><span>成人</span> ${pharmacyStore[i].properties.mask_adult} </p>
+                          <p class="child"><span>兒童</span> ${pharmacyStore[i].properties.mask_child} </p>
+                      </div>
+                      <p>${data[i].properties.updated} 更新</p>
+                    </div>`
+
+            searchList += str;
+            starData.forEach(function(e) {
+                if (pharmacyStore[i].properties.phone === e) {
+
+                } else {
+                    return;
+                }
+            })
         }
+        // console.log(searchList);
+        // searchList_Stared(getStarted);
+
+        //點選藥局改變地圖位置 
+        sectionView.innerHTML = searchList;
+        starBtnActive()
+        let infoPointer = document.querySelectorAll(".maskInfo");
+        infoPointer.forEach(function(e) {
+            e.addEventListener('click', function(el) {
+                const Lat = el.currentTarget.dataset.lat;
+                const Lng = el.currentTarget.dataset.lng;
+                map.setView([Lat, Lng], 20)
+                console.log(Lat, Lng, el.currentTarget);
+            })
+        })
+
+
 
 
         //口罩按鈕查詢
-        const maskScroll = document.querySelector('.side_nav_item')
         for (j = 0; j < maskBtn.length; j++) {
             maskBtn[j].addEventListener('click', function(e) {
                 let c = 0;
@@ -213,55 +263,47 @@ xhr.onload = function() {
             })
         }
 
-        starBtnActive()
 
+    }
+
+    function getCountMuch(pharmacyStore) {
+        const countMuch = document.querySelector('#count-much');
+        countMuch.addEventListener('click', function(e) {
+            maskScroll.scrollTop = 0;
+            e.currentTarget.classList.add('active')
+            // let maskCount = properties.mask_adult + properties.mask_child
+            pharmacyStore.sort(function(a, b) {
+                // let maskCount = properties.mask_adult + properties.mask_child
+                return b.properties.mask_adult - a.properties.mask_adult;
+            })
+
+            StoreInfo(pharmacyStore);
+        })
     }
 
     function getStarlocal(item) {
         let str = '';
         let starlocal = [];
-        // let starLen = item.length;
-        // console.log(item[2]);
-        for (let i = 0; data.length > i; i++) {
-            for (let j = 0; j < item.length; j++) {
-                if (data[i].properties.phone == item[j]) {
-                    str = `
-                    <div class="card maskInfo" data-lat="${data[i].geometry.coordinates[1]}" data-lng="${data[i].geometry.coordinates[0]}">
-                      <div class=" card-body">
-                          <div class=" card-item">
-                              <h3 class=" card-p" > ${data[i].properties.name}</h3> <span class="card-distance">10km</span>
-                              <ul>
-                                  <li>${data[i].properties.address}</li>
-                                  <li>${data[i].properties.phone}</li>
-                                  <li>今日營業時間：</li>
-                              </ul>
-                          </div>
-                          <div class="card-button">
-                                <a class="icon-star hide"> <img src="imgs/icon_star_unselected.svg" alt="" /></a>
-                                <a class="icon-stared show"> <img src="imgs/icon_star_selected.svg" alt="" /></a>
-                                <a class="icon-load" href="#"> <img src="imgs/icon_nav.svg" alt="" /></a>
-                          </div>
-                      </div>
-                      <div class=" card-maskcount">
-                          <p class="adult"><span>成人</span> ${data[i].properties.mask_adult} </p>
-                          <p class="child"><span>兒童</span> ${data[i].properties.mask_child} </p>
-                      </div>
-                      <p>${data[i].properties.updated} 更新</p>
-                    </div>`
-                    starlocal += str;
-
+        item.forEach(function(e) {
+            for (let i = 0; data.length > i; i++) {
+                if (data[i].properties.phone === e) {
+                    starlocal.push(data[i]);
                 }
             }
-            sectionView.innerHTML = starlocal;
-        }
+        })
+        StoreInfo(starlocal);
+        getCountMuch(starlocal)
         starBtnActive()
     }
 
-    map.addLayer(markers);
+    // function searchList_Stared(getStarted) {
+    //     console.log(getStarted.properties.mask_adult)
+    // }
+
     searchbtn.addEventListener('click', searchAddress, false);
-    searchInput.addEventListener('keydown', searchAddress, false);
+    // searchInput.addEventListener('keydown', searchAddress, false);
     // staredBtn.addEventListener('click', getStarlocal, false);
-    getStarlocal(starData);
+    // getStarlocal(starData);
 }
 
 L.control.zoom({
@@ -275,7 +317,7 @@ function starBtnActive() {
 
     star.forEach(function(e) {
         const starTel = e.parentNode.parentNode.children[0].children[2].children[1].textContent;
-        console.log(starTel);
+        // console.log(starTel);
         e.addEventListener('click', function() {
 
             starData.push(starTel);
@@ -301,6 +343,7 @@ function starBtnActive() {
             localStorage.setItem('starLocal', JSON.stringify(starData));
         })
     })
+
 }
 
 

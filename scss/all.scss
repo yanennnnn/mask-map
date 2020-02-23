@@ -24,7 +24,8 @@
 
  .map {
      width: 275px;
-     height: 176px;
+     height: auto;
+     padding-bottom: 20px;
 
  }
 
@@ -80,13 +81,35 @@
      display: flex;
      flex-direction: column;
 
+     .icon-load {
+         margin-top: 10px;
+     }
+
+     .icon-star.hide {
+         display: none;
+     }
+
+     .icon-star.show {
+         display: block;
+     }
+
+     .icon-stared.hide {
+         display: none;
+     }
+
+     .icon-stared.show {
+         display: block;
+     }
+
+     .icon-stared {
+         display: none;
+     }
 
  }
 
  .card-maskcount {
      display: flex;
      justify-content: space-around;
-
 
      p {
          font-size: 20px;
@@ -342,7 +365,8 @@
                  margin-left: 5px;
              }
 
-             #stared-btn.active {
+             #stared-btn.active,
+             #count-much.active {
                  background-color: $secondary;
                  color: $white;
                  border: 1px solid $secondary;
@@ -378,32 +402,7 @@
                  padding: 10px 15px 0 0;
              }
 
-             .card-button {
-                 .icon-load {
-                     margin-top: 10px;
-                 }
 
-                 .icon-star.hide {
-                     display: none;
-                 }
-
-                 .icon-star.show {
-                     display: block;
-                 }
-
-                 .icon-stared.hide {
-                     display: none;
-                 }
-
-                 .icon-stared.show {
-                     display: block;
-                 }
-
-                 .icon-stared {
-                     display: none;
-                 }
-
-             }
 
              .card-maskcount {
                  p {
