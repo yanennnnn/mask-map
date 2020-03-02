@@ -13,6 +13,12 @@
      }
  }
 
+ @mixin smallphone {
+     @media(max-width: 375px) {
+         @content
+     }
+ }
+
  @mixin mask-circle-size($width, $height, $bgcolor) {
      width: $width;
      height: $height;
@@ -245,11 +251,14 @@
          align-items: center;
          justify-content: space-between;
 
+         @include smallphone() {
+             padding: 30px 19px 0 19px;
+         }
+
          h2 {
              font-size: 30px;
              color: $primary;
              font-weight: 600;
-
          }
 
          .mark {
@@ -265,11 +274,16 @@
              p:last-child {
                  font-size: 14px;
                  color: $primary;
+
+                 @include smallphone() {
+                     font-size: 12px;
+                 }
              }
          }
      }
 
      &_banner {
+         margin: 0 auto;
          background-image: url("../imgs/banner_announce_fix.png");
          background-repeat: no-repeat;
          background-size: cover;
@@ -277,13 +291,25 @@
          height: 155px;
          position: relative;
 
+         @include smallphone() {
+             width: 330px;
+             height: 134px;
+         }
+
          // padding-bottom: 50%;
          .day {
              font-size: 30px;
              font-weight: 900;
              color: $primary;
              padding: 28px 0 0 47px;
+
+             @include smallphone() {
+                 font-size: 25px;
+                 padding: 25px 0 0 40px;
+             }
          }
+
+
 
          .number {
              color: $secondary;
@@ -291,6 +317,11 @@
              font-weight: 600;
              margin-top: 40px;
              padding-left: 25px;
+
+             @include smallphone() {
+                 font-size: 28px;
+                 margin-top: 33px;
+             }
          }
 
          >label {
@@ -302,6 +333,10 @@
 
      &_search {
          padding: 0 29px;
+
+         @include smallphone() {
+             padding: 0 19px;
+         }
 
          >p {
              font-size: 18px;
@@ -319,6 +354,9 @@
              overflow: hidden;
              border: 1px solid $primary;
 
+             // @include smallphone() {
+             //     width: 90%;
+             // }
              >div {
                  width: 20px;
                  height: 100%;
@@ -327,6 +365,10 @@
                  align-items: center;
                  justify-content: center;
                  margin-right: 10px;
+
+                 @include smallphone() {
+                     width: 14px
+                 }
              }
 
              input {
@@ -361,6 +403,13 @@
                          color: $primary;
                          padding: 5px 17px 5px 17px;
 
+                         @include smallphone() {
+                             @include mask-circle-size(30px, 8px, $white);
+                             color: $primary;
+                             font-size: 14px;
+                             padding: 5px 14px 5px 14px;
+                         }
+
                          &:hover {
                              background-color: $secondary;
                              color: $white;
@@ -391,12 +440,20 @@
          // padding-top: 30px;
          align-items: flex-end;
 
+         @include smallphone() {
+             padding: 0 19px 30px 19px;
+         }
+
          p {
              font-size: 20px;
              color: $primary;
              font-weight: 600;
              padding-top: 30px;
              position: relative;
+
+             @include smallphone() {
+                 font-size: 18px;
+             }
 
              &:before {
                  content: '';
@@ -405,6 +462,10 @@
                  position: absolute;
                  top: 0;
                  left: 14px;
+
+                 @include smallphone() {
+                     width: 280px;
+                 }
              }
 
          }
