@@ -256,7 +256,7 @@ newpromise.then(function(userPosition) {
                 e.addEventListener('click', function(el) {
                     const Lat = el.currentTarget.dataset.lat;
                     const Lng = el.currentTarget.dataset.lng;
-                    let marker = markers[e.indexOf(this)]
+                    // let marker = markers[e.indexOf(this)]
                     map.setView([Lat, Lng], 20)
                     // markers.zoomToShowLayer(marker, () => {
                     //     marker.openPopup()
